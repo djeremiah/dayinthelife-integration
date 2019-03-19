@@ -1,7 +1,7 @@
 ---
 - name: Get SSO token
   shell: "curl --insecure -X POST 'https://launcher-sso-launcher.{{ocp_apps_domain}}/auth/realms/launcher_realm/protocol/openid-connect/token' \
-  -H 'Content-Type: application/x-www-form-urlencoded' -d 'username={{ admin_username | default('launcheradmin') }}' -d 'password={{ admin_password | default('admin') }}' -d 'grant_type=password' -d 'client_id=che-client'"
+  -H 'Content-Type: application/x-www-form-urlencoded' -d 'username={{ eval_launcher_admin_username | default('launcheradmin') }}' -d 'password={{ eval_launcher_admin_password | default('admin') }}' -d 'grant_type=password' -d 'client_id=che-client'"
   register: token_text
 
 - set_fact: TKN={{ (token_text.stdout | from_json).access_token }}
@@ -9,9 +9,9 @@
 - debug: var=TKN
 
 # TODO: Make the protocol a var
-- name: Check if Che IDE is deployed
+- name: Check if CodeReady IDE is deployed
   uri: 
-    url: https://che-{{ item }}.{{ ocp_apps_domain }}/api/stack
+    url: https://codeready-codeready.{{ ocp_apps_domain }}/api/stack
     validate_certs: false
     method: GET
     headers:
@@ -25,7 +25,7 @@
 - name: Update custom stack to Che
   tags: install_custom_stack
   uri: 
-    url: https://che-{{ item }}.{{ ocp_apps_domain }}/api/stack
+    url: https://codeready-codeready.{{ ocp_apps_domain }}/api/stack
     validate_certs: false
     method: POST
     return_content: yes
@@ -170,7 +170,7 @@
 
 - name: Give stack view/read permissions to all other users
   uri:
-    url: https://che-{{ item }}.{{ ocp_apps_domain }}/api/permissions
+    url: https://codeready-codeready.{{ ocp_apps_domain }}/api/permissions
     validate_certs: false
     method: POST
     return_content: yes

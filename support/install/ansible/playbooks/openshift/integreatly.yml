@@ -26,14 +26,12 @@
         ocp_apps_domain: "{{ hostvars['SHARED_VARS']['oc_apps_domain'] }}"
       tags: microcks
     - include_role:
-        name: setup_che_multi
+        name: setup_codeready_multiuser
       vars:
-        item: che
-        eval_rhsso_admin_username: "{{ hostvars['SHARED_VARS']['rhsso_admin_username'] }}"
-        eval_rhsso_admin_password: "{{ hostvars['SHARED_VARS']['rhsso_admin_password'] }}"
+        eval_launcher_admin_password: "{{ hostvars['SHARED_VARS']['launcher_admin_password'] }}"
         ocp_apps_domain: "{{ hostvars['SHARED_VARS']['oc_apps_domain'] }}"
-        openshift_oauth_token: ""
-      tags: che
+        launcher_project: "launcher"
+      tags: codeready
     - include_role:
         name: provision_gogs
       vars:   

@@ -2,6 +2,9 @@
 - set_fact:
     rhsso_namespace: "sso"
 
+- set_fact:
+    launcher_namespace: "launcher"
+
 - name: Retrieve cluster route subdomain
   slurp:
     src: "{{ eval_openshift_master_config_path }}"
@@ -15,6 +18,10 @@
 - name: Retrieve RH-SSO admin user name
   shell: oc get dc/sso -o jsonpath='{.spec.template.spec.containers[?(@.name=="sso")].env[?(@.name=="SSO_ADMIN_USERNAME")].value}' -n {{ rhsso_namespace }}
   register: rhsso_admin_user_cmd
+
+- name: Retrieve launcher admin password
+  shell: oc get dc/launcher-sso -o jsonpath='{.spec.template.spec.containers[?(@.name=="sso")].env[?(@.name=="SSO_ADMIN_USERNAME")].value}' -n {{ launcher_namespace }}
+  register: launcher_admin_password_cmd
 
 - name: Retrieve 3Scale admin auth token
   shell: oc get secret/system-seed --template='{% raw %}{{.data.ADMIN_ACCESS_TOKEN}}{% endraw %}' -n 3scale | base64 -d
@@ -41,10 +48,14 @@
 - set_fact:
     rhsso_admin_password: "{{rhsso_admin_password_cmd.stdout}}"
 
+- set_fact:
+    launcher_admin_password: "{{launcher_admin_password_cmd.stdout}}"
+
 - add_host:
     name: SHARED_VARS
     rhsso_admin_username: "{{ rhsso_admin_username }}"
     rhsso_admin_password: "{{ rhsso_admin_password }}"
+    launcher_admin_password: "{{ launcher_admin_password }}"
     oc_apps_domain: "{{ oc_apps_domain }}"
     threescale_master_token: "{{threescale_master_token}}"
     threescale_admin_token: "{{threescale_admin_token}}"
