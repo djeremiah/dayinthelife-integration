@@ -20,7 +20,7 @@
   register: rhsso_admin_user_cmd
 
 - name: Retrieve launcher admin password
-  shell: oc get dc/launcher-sso -o jsonpath='{.spec.template.spec.containers[?(@.name=="sso")].env[?(@.name=="SSO_ADMIN_USERNAME")].value}' -n {{ launcher_namespace }}
+  shell: oc get dc/launcher-sso -o jsonpath='{.spec.template.spec.containers[?(@.name=="launcher-sso")].env[?(@.name=="SSO_ADMIN_PASSWORD")].value}' -n {{ launcher_namespace }}
   register: launcher_admin_password_cmd
 
 - name: Retrieve 3Scale admin auth token
